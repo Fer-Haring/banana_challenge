@@ -1,9 +1,9 @@
 import 'package:banana_challenge/providers/product_provider.dart';
+import 'package:banana_challenge/widgets/widgets.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class ProductDetailScreen extends ConsumerStatefulWidget {
   const ProductDetailScreen(this.productId, {super.key});
@@ -41,58 +41,15 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
         ),
       ),
       body: product != null
-          ? Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  CarouselSlider(
-                    items: product.images.map((i) {
-                      return Builder(
-                        builder: (BuildContext context) {
-                          return Container(
-                              width: MediaQuery.of(context).size.width,
-                              margin:
-                                  const EdgeInsets.symmetric(horizontal: 5.0),
-                              child: Image.network(i));
-                        },
-                      );
-                    }).toList(),
-                    carouselController: _carouselController,
-                    options: CarouselOptions(
-                      height: 200.0,
-                      onPageChanged: (index, reason) {
-                        setState(() {
-                          _currentImageIndex = index;
-                        });
-                      },
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Center(
-                    child: AnimatedSmoothIndicator(
-                      activeIndex: _currentImageIndex,
-                      count: product.images.length,
-                      effect: const ScaleEffect(
-                        dotWidth: 10,
-                        dotHeight: 10,
-                        activeDotColor: Colors.blue,
-                      ),
-                      onDotClicked: (index) {
-                        _carouselController.animateToPage(index);
-                      },
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  Text(product.description),
-                  const SizedBox(height: 16),
-                  Text('USD ${product.price}',
-                      style: const TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black)),
-                ],
-              ),
+          ? ProductDetailContent(
+              productId: widget.productId,
+              carouselController: _carouselController,
+              currentImageIndex: _currentImageIndex,
+              onPageChanged: (index) {
+                setState(() {
+                  _currentImageIndex = index;
+                });
+              },
             )
           : const Center(child: CircularProgressIndicator()),
       floatingActionButton: Padding(
